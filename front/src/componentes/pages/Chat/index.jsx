@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./style.css";
 
 function ChatWindow({ userName }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const messagesEndRef = useRef(null); // Ref para o scroll
+
+  // Efeito para carregar mensagens salvas no localStorage
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages)); // Carrega as mensagens do localStorage
+    }
+  }, []);
+
+  // Efeito para salvar mensagens no localStorage sempre que elas mudam
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chatMessages', JSON.stringify(messages)); // Salva as mensagens no localStorage
+    }
+  }, [messages]);
+
+  // Função para rolar até a última mensagem
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Efeito para rolar automaticamente para a última mensagem quando novas mensagens chegarem
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -22,6 +48,7 @@ function ChatWindow({ userName }) {
             {msg.text}
           </div>
         ))}
+        <div ref={messagesEndRef} /> {/* Div que serve para o scroll até o fim */}
       </section>
 
       <form className="chat__form" onSubmit={handleSendMessage}>
