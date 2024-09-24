@@ -1,32 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios'; // Biblioteca para fazer requisições HTTP
 import "./style.css";
 
 function ChatWindow({ userName }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef(null); // Ref para o scroll
-
-  // Efeito para carregar mensagens salvas no localStorage
-  useEffect(() => {
-    const savedMessages = localStorage.getItem('chatMessages');
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages)); // Carrega as mensagens do localStorage
-    }
-  }, []);
-
-  // Efeito para salvar mensagens no localStorage sempre que elas mudam
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('chatMessages', JSON.stringify(messages)); // Salva as mensagens no localStorage
-    }
-  }, [messages]);
+  const [socket, setSocket] = useState(null); // Estado para WebSocket
 
   // Função para rolar até a última mensagem
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Efeito para rolar automaticamente para a última mensagem quando novas mensagens chegarem
+  // Carregar mensagens do MongoDB quando o componente é montado
+  useEffect(() => {
+    axios.get('http://localhost:8080/messages')
+      .then((response) => {
+        setMessages(response.data); // Define as mensagens com as salvas no MongoDB
+        scrollToBottom();
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar mensagens:', error);
+      });
+  }, []);
+
+  // Conectar ao WebSocket
+  useEffect(() => {
+    const webSocket = new WebSocket('ws://localhost:8080/chat'); // Substitua pela URL do seu backend
+    setSocket(webSocket);
+
+    webSocket.onmessage = (event) => {
+      const newMessage = JSON.parse(event.data);
+      setMessages((prevMessages) => [...prevMessages, newMessage]); // Adiciona novas mensagens ao estado
+    };
+
+    return () => {
+      webSocket.close();
+    };
+  }, []);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -34,8 +47,9 @@ function ChatWindow({ userName }) {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      setMessages([...messages, { sender: userName, text: message }]);
-      setMessage('');
+      const newMessage = { sender: userName, text: message };
+      socket.send(JSON.stringify(newMessage)); // Envia a mensagem via WebSocket
+      setMessage(''); // Limpa o campo de entrada
     }
   };
 

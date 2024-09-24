@@ -1,4 +1,4 @@
-package com.site.chatteste.config;
+package com.site.chatteste.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,21 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Document(collection = "messages")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Document(collection = "mensagem")
-public class ObjMsg {
+public class Message {
 
 	@Id
 	private String id;
-	
-	private String user;
-	private String msg;
+	private String sender;
+	private String text;
 
-	@Override
-	public String toString() {
-		return user + "   " + msg;
-	}
 }
