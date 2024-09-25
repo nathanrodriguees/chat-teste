@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.site.chatteste.model.Message;
@@ -18,7 +19,7 @@ public class ChatController {
 	MessageRepository repository;
 
 	@GetMapping("/messages")
-	public List<Message> getAllMessages() {
-		return repository.findAll();
+	public List<Message> getMessagesByChat(@RequestParam String chatId) {
+		return repository.findByChatId(chatId);
 	}
 }

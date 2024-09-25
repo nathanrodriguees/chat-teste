@@ -24,22 +24,35 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) {
-		sessions.add(session);
+		sessions.add(session); // Adiciona a nova sessão à lista
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		// Recebe a mensagem, converte para o objeto Message e salva no MongoDB
 		Message newMessage = objectMapper.readValue(message.getPayload(), Message.class);
-		messageRepository.save(newMessage); // Salva a mensagem no MongoDB
+		messageRepository.save(newMessage); // Salva a mensagem no banco
 
-		// Envia a mensagem para todos os clientes conectados
+		// Extrai o chatId da URL da sessão
+		String sessionChatId = extractChatIdFromSession(session);
+
+		// Envia a mensagem apenas para os usuários conectados ao mesmo chatId
 		for (WebSocketSession webSocketSession : sessions) {
-			webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
+			String webSocketChatId = extractChatIdFromSession(webSocketSession); // Extrai o chatId da outra sessão
+			if (webSocketSession.isOpen() && webSocketChatId.equals(newMessage.getChatId())) {
+				webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(newMessage)));
+			}
 		}
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-		sessions.remove(session);
+		sessions.remove(session); // Remove a sessão quando o WebSocket é desconectado
+	}
+
+	// Método auxiliar para extrair o chatId da URL
+	private String extractChatIdFromSession(WebSocketSession session) {
+		String path = session.getUri().getPath();
+		return path.substring(path.lastIndexOf('/') + 1); // Extrai o chatId da URL
 	}
 }

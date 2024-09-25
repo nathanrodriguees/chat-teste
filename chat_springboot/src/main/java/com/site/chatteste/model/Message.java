@@ -14,10 +14,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Message {
-
 	@Id
 	private String id;
 	private String sender;
 	private String text;
-
+	private String chatId; // Novo campo para identificar o chat
 }

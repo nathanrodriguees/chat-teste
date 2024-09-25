@@ -1,55 +1,78 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios'; // Biblioteca para fazer requisições HTTP
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useUser } from '../UserContext/UserContext';
 import "./style.css";
 
-function ChatWindow({ userName }) {
+function ChatWindow() {
+  const { chatId } = useParams();  // Obtém o ID do chat da URL
+  const { userName } = useUser();  // Obtém o userName do contexto
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
-  const messagesEndRef = useRef(null); // Ref para o scroll
-  const [socket, setSocket] = useState(null); // Estado para WebSocket
+  const messagesEndRef = useRef(null);
+  const [socket, setSocket] = useState(null);
 
-  // Função para rolar até a última mensagem
+  // Função para rolar até o fim do chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Carregar mensagens do MongoDB quando o componente é montado
+  // Carregar as mensagens ao selecionar o chat
   useEffect(() => {
-    axios.get('http://localhost:8080/messages')
+    axios.get(`http://localhost:8080/messages?chatId=${chatId}`)
       .then((response) => {
-        setMessages(response.data); // Define as mensagens com as salvas no MongoDB
-        scrollToBottom();
+        setMessages(response.data);  // Carrega as mensagens do banco
+        scrollToBottom();  // Rola para o fim
       })
       .catch((error) => {
         console.error('Erro ao carregar mensagens:', error);
       });
-  }, []);
+  }, [chatId]);
 
-  // Conectar ao WebSocket
+  // Conectar ao WebSocket e receber mensagens em tempo real
   useEffect(() => {
-    const webSocket = new WebSocket('ws://localhost:8080/chat'); // Substitua pela URL do seu backend
+    const webSocket = new WebSocket(`ws://localhost:8080/chat/${chatId}`);
     setSocket(webSocket);
+
+    webSocket.onopen = () => {
+      console.log('WebSocket conectado');
+    };
 
     webSocket.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, newMessage]); // Adiciona novas mensagens ao estado
+      setMessages((prevMessages) => [...prevMessages, newMessage]);  // Adiciona a nova mensagem
+      scrollToBottom();  // Rola para o fim
+    };
+
+    webSocket.onclose = () => {
+      console.log('WebSocket desconectado');
+    };
+
+    webSocket.onerror = (error) => {
+      console.error('Erro no WebSocket:', error);
     };
 
     return () => {
       webSocket.close();
     };
-  }, []);
+  }, [chatId]);  // Conecta e desconecta ao trocar o chatId
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
+  // Função para enviar mensagem
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      const newMessage = { sender: userName, text: message };
-      socket.send(JSON.stringify(newMessage)); // Envia a mensagem via WebSocket
-      setMessage(''); // Limpa o campo de entrada
+    if (message.trim() && socket && socket.readyState === WebSocket.OPEN) {
+      const newMessage = { sender: userName, text: message, chatId };
+
+      // Enviar a mensagem via WebSocket (sem adicionar localmente)
+      socket.send(JSON.stringify(newMessage));
+
+      // Limpar a mensagem
+      setMessage('');
+
+      // Rolar para o fim da conversa
+      scrollToBottom();
+    } else {
+      console.error('WebSocket não está pronto para envio de mensagens.');
     }
   };
 
@@ -62,7 +85,7 @@ function ChatWindow({ userName }) {
             {msg.text}
           </div>
         ))}
-        <div ref={messagesEndRef} /> {/* Div que serve para o scroll até o fim */}
+        <div ref={messagesEndRef} />
       </section>
 
       <form className="chat__form" onSubmit={handleSendMessage}>

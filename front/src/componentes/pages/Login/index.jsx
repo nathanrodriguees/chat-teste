@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import "./style.css";
+import { useUser } from '../UserContext/UserContext';
+import './style.css';
 
 function LoginForm({ onLogin }) {
   const [name, setName] = useState('');
+  const { setUserName } = useUser();  // Define o userName no contexto
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name) {
-      onLogin(name);
+      setUserName(name);  // Define o nome de usuário no contexto
+      onLogin();          // Notifica o App que o login foi realizado
     }
   };
 
