@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import com.site.chatteste.model.Message;
+import com.site.chatteste.model.Mensagem;
 
 @Repository
-public interface MessageRepository extends MongoRepository<Message, String> {
+public interface MensagemRepository extends MongoRepository<Mensagem, String> {
 
-	List<Message> findByChatId(String chatId); // Busca mensagens por chatId
+	List<Mensagem> findByChatId(String chatId); // Busca mensagens por chatId
 
 }

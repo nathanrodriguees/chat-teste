@@ -1,42 +1,107 @@
-.chat-selection {
-    width: 100%;
-    max-width: 330px;
-    background-color: #212121;
-    border-radius: 5px;
-    padding: 20px;
-    text-align: center;
-}
-
-.chat-selection > h2 {
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    color: #f2f2f2;
-}
-
+/* Contêiner para as opções de comunidades */
 .chat-selection__options {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-top: 20px;
+    padding: 10px;
 }
 
+/* Botão "+" para adicionar uma nova comunidade */
+.chat-selection__add-button {
+    border: none;
+    padding: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    background-color: #444; /* Fundo cinza escuro */
+    cursor: pointer;
+    color: #f2f2f2;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover no botão "+" */
+.chat-selection__add-button:hover {
+    background-color: #555; /* Fundo cinza um pouco mais claro */
+    transform: scale(1.1); /* Aumenta ligeiramente ao passar o mouse */
+}
+
+/* Formulário para criar nova comunidade */
+.chat-selection__form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #1e1e1e; /* Fundo bem escuro */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+}
+
+/* Campo de input para o nome da comunidade */
+.chat-selection__form input {
+    border: 2px solid #555; /* Borda cinza escuro */
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    outline: none;
+    color: #f2f2f2;
+    background-color: #333; /* Fundo do input cinza escuro */
+    transition: border-color 0.3s ease;
+}
+
+/* Estilo ao focar no input */
+.chat-selection__form input:focus {
+    border-color: #777; /* Borda muda para cinza médio */
+}
+
+/* Botão para criar nova comunidade */
+.chat-selection__form button {
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #444; /* Fundo cinza escuro */
+    color: #f2f2f2;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover no botão de criação */
+.chat-selection__form button:hover {
+    background-color: #555; /* Fundo mais claro no hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilo para os botões de comunidades */
 .chat-selection__options button {
     border: none;
     padding: 15px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    background-color: #ddd;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #2c2c2c; /* Fundo cinza escuro */
+    color: #f2f2f2;
     cursor: pointer;
-    color: #121212;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: left; /* Texto alinhado à esquerda */
 }
 
+/* Efeito de hover para botões de comunidades */
 .chat-selection__options button:hover {
-    background-color: #fff;
+    background-color: #3a3a3a; /* Fundo um pouco mais claro */
+    transform: translateY(-2px); /* Efeito de elevação */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
 }
 
+/* Efeito de foco para o botão de comunidade */
 .chat-selection__options button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #f2f2f2;
+    outline: 2px solid #777; /* Borda cinza claro */
 }

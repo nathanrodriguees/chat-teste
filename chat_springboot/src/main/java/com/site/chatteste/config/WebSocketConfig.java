@@ -6,16 +6,16 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.site.chatteste.repository.MessageRepository;
+import com.site.chatteste.repository.MensagemRepository;
 
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-	private final MessageRepository messageRepository;
+	private final MensagemRepository messageRepository;
 
 	@Autowired
-	public WebSocketConfig(MessageRepository messageRepository) {
+	public WebSocketConfig(MensagemRepository messageRepository) {
 		this.messageRepository = messageRepository;
 	}
 

@@ -19,7 +19,7 @@ function ChatWindow() {
 
   // Carregar as mensagens ao selecionar o chat
   useEffect(() => {
-    axios.get(`http://localhost:8080/messages?chatId=${chatId}`)
+    axios.get(`http://localhost:8080/mensagens?chatId=${chatId}`)
       .then((response) => {
         setMessages(response.data);  // Carrega as mensagens do banco
         scrollToBottom();  // Rola para o fim
@@ -61,7 +61,7 @@ function ChatWindow() {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (message.trim() && socket && socket.readyState === WebSocket.OPEN) {
-      const newMessage = { sender: userName, text: message, chatId };
+      const newMessage = { usuario: userName, conteudo: message, chatId };
 
       // Enviar a mensagem via WebSocket (sem adicionar localmente)
       socket.send(JSON.stringify(newMessage));
@@ -80,9 +80,9 @@ function ChatWindow() {
     <section className="chat">
       <section className="chat__messages">
         {messages.map((msg, index) => (
-          <div key={index} className={msg.sender === userName ? "message--self" : "message--other"}>
-            {msg.sender !== userName && <span className="message--sender">{msg.sender}</span>}
-            {msg.text}
+          <div key={index} className={msg.usuario === userName ? "message--self" : "message--other"}>
+            {msg.usuario !== userName && <span className="message--sender">{msg.usuario}</span>}
+            {msg.conteudo}
           </div>
         ))}
         <div ref={messagesEndRef} />

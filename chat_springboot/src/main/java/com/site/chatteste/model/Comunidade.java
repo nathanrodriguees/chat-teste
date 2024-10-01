@@ -8,15 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Document(collection = "messages")
+@Document(collection = "comunidades")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Message {
+public class Comunidade {
 	@Id
 	private String id;
-	private String sender;
-	private String text;
-	private String chatId; // Novo campo para identificar o chat
+	private String nome; 
 }

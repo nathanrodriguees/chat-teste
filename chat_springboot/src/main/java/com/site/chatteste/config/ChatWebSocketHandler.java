@@ -9,16 +9,16 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.site.chatteste.model.Message;
-import com.site.chatteste.repository.MessageRepository;
+import com.site.chatteste.model.Mensagem;
+import com.site.chatteste.repository.MensagemRepository;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-	private final MessageRepository messageRepository;
+	private final MensagemRepository messageRepository;
 
-	public ChatWebSocketHandler(MessageRepository messageRepository) {
+	public ChatWebSocketHandler(MensagemRepository messageRepository) {
 		this.messageRepository = messageRepository;
 	}
 
@@ -30,7 +30,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		// Recebe a mensagem, converte para o objeto Message e salva no MongoDB
-		Message newMessage = objectMapper.readValue(message.getPayload(), Message.class);
+		Mensagem newMessage = objectMapper.readValue(message.getPayload(), Mensagem.class);
 		messageRepository.save(newMessage); // Salva a mensagem no banco
 
 		// Extrai o chatId da URL da sessão
